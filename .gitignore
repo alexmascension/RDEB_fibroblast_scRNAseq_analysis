@@ -1,0 +1,6 @@
+**/*.fastq.gz
+**/*.tab
+**/*.loom
+**/*.pdf
+**/*.cloupe
+**/*.zip
