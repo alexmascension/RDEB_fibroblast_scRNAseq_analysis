@@ -7,3 +7,4 @@
 .ipynb_checkpoints/
 **/*.fastq
 **/*.h5
+**/*.png
