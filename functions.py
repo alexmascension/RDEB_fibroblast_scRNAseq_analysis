@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 from scipy.stats import chi2_contingency
 import numpy as np
 import scanpy as sc
+import seaborn as sns
+from statannot import add_stat_annotation
 
 
 dict_WT_KO_colors = {'KO1': '#ea693c', 'KO2': '#f28d5c', 'WT1': '#20668d', 'WT2': '#229eb2'}
@@ -72,3 +74,30 @@ def adata_plot_KOvsWT(adata, list_names, do_return=False, col_cell_type='merged_
     
     if do_return:
         return df_proportions_KO_WT, df_counts_KO_WT, df_pval
+    
+    
+
+    
+def stat_annot_gene(gene, adata, dict_pops, type_plot='violin', add_stats=True):
+    fig = plt.figure()
+    df = pd.DataFrame({'x': adata.obs['subtype'].values, 'y': adata[:, gene].X.toarray().ravel(), 'hue': adata.obs['condition'].values})
+    
+    if type_plot == 'violin':
+        g = sns.violinplot(x='x', y='y', hue='hue', data=df, rotation=90, split=True, cut=True, inner="stick")
+    elif type_plot == 'box':
+        g = sns.boxplot(x='x', y='y', hue='hue', data=df )
+
+    g.set_xticklabels(g.get_xticklabels(), rotation=40, ha='right')
+    g.set_xlabel(gene)
+    g.set_ylabel('')
+
+    
+    if add_stats:
+        for i in  sorted(dict_pops.keys()):
+            try:
+                add_stat_annotation(g, data=df, x='x', y='y', hue='hue',
+                                box_pairs=[((i, "KO"), (i, "WT"))],
+                                test='t-test_ind', loc='inside', comparisons_correction=None, verbose=False)
+            except:
+                pass
+
