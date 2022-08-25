@@ -83,9 +83,10 @@ def stat_annot_gene(gene, adata, dict_pops, type_plot='violin', add_stats=True):
     df = pd.DataFrame({'x': adata.obs['subtype'].values, 'y': adata[:, gene].X.toarray().ravel(), 'hue': adata.obs['condition'].values})
     
     if type_plot == 'violin':
-        g = sns.violinplot(x='x', y='y', hue='hue', data=df, rotation=90, split=True, cut=True, inner="stick")
+        g = sns.violinplot(x='x', y='y', hue='hue', data=df, rotation=90, split=True, cut=True, inner="stick", 
+                           palette=[dict_WT_KO_colors['KO2'], dict_WT_KO_colors['WT2']])
     elif type_plot == 'box':
-        g = sns.boxplot(x='x', y='y', hue='hue', data=df )
+        g = sns.boxplot(x='x', y='y', hue='hue', data=df, palette=[dict_WT_KO_colors['KO2'], dict_WT_KO_colors['WT2']])
 
     g.set_xticklabels(g.get_xticklabels(), rotation=40, ha='right')
     g.set_xlabel(gene)
