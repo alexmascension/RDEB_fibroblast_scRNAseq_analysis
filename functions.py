@@ -124,6 +124,7 @@ def adata_plot_KOvsWT_2bars(adata, list_names, do_return=False, col_cell_type='m
         
     
     list_max_val = []
+    list_pval_text = []
     
     for idx, pval in enumerate(df_pval.loc[idx_sort]['p-val'].values):
         if 0.01 < pval < 0.05:
@@ -141,9 +142,16 @@ def adata_plot_KOvsWT_2bars(adata, list_names, do_return=False, col_cell_type='m
                       df_counts_KO_WT.loc[idx_sort[idx], 'WT1'] + df_counts_KO_WT.loc[idx_sort[idx], 'WT2']])
         
         list_max_val.append(max_val)
-        
-        
-        ax.text(idx,  1.03 * max_val, pval_txt, ha='center')
+        list_pval_text.append(pval_txt)
+    
+    max_val_total = max(list_max_val)
+    
+    for idx, pval_text, max_val in zip(range(len(list_max_val)), list_pval_text, list_max_val):    
+        ax.text(idx, max_val + 0.04 * max_val_total, pval_text, ha='center')
+        if pval_text != '':
+            ax.plot([idx - dx, idx - dx, idx + dx, idx + dx], 
+                    [max_val + 0.01 * max_val_total, max_val + 0.03 * max_val_total,max_val + 0.03 * max_val_total,max_val + 0.01 * max_val_total,], 
+                    c='black')
     
     ax.set_ylim([0, 1.1 * max(list_max_val)])
     
@@ -160,7 +168,6 @@ def adata_plot_KOvsWT_2bars(adata, list_names, do_return=False, col_cell_type='m
     
     if do_return:
         return df_counts_KO_WT, df_pval
-
     
     
 def stat_annot_gene(gene, adata, dict_pops, type_plot='violin', add_stats=True):
