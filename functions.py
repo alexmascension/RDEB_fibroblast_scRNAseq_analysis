@@ -109,8 +109,9 @@ def adata_plot_KOvsWT_2bars(adata, list_names, do_return=False, col_cell_type='m
         
 
 
-    idx_sort = ((df_counts_KO_WT['KO1'] + df_counts_KO_WT['KO2']) + 
-                (df_counts_KO_WT['WT1'] + df_counts_KO_WT['WT2'])).sort_values(ascending=False).index
+#     idx_sort = ((df_counts_KO_WT['KO1'] + df_counts_KO_WT['KO2']) + 
+#                 (df_counts_KO_WT['WT1'] + df_counts_KO_WT['WT2'])).sort_values(ascending=False).index
+    idx_sort = adata.obs['merged_cell_type'].cat.categories
 
     w, dx = 0.4, 0.2
     for idx, idx_name in enumerate(idx_sort):
@@ -156,7 +157,7 @@ def adata_plot_KOvsWT_2bars(adata, list_names, do_return=False, col_cell_type='m
     ax.set_ylim([0, 1.1 * max(list_max_val)])
     
     ax.set_xticks(range(len(df_counts_KO_WT)))
-    ax.set_xticklabels([i.split('/')[1] for i in idx_sort], rotation=90)
+    ax.set_xticklabels([i.split(': ')[1] for i in idx_sort], rotation=90)
 
     ax.spines['right'].set_visible(False)
     ax.spines['top'].set_visible(False)
