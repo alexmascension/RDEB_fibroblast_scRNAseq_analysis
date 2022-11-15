@@ -245,7 +245,7 @@ def plot_WT_KO_genes(adata, genes, n_cols=3, figsize=None, plot_labels_batch=Tru
         row_gene = int(idx / n_cols) 
         col_gene = idx % n_cols
         
-        min_gene, max_gene = adata_fb[:, gene].X.min(), adata_fb[:, gene].X.max()
+        min_gene, max_gene = adata[:, gene].X.min(), adata[:, gene].X.max()
         
         sc.pl.umap(adata_WT, color=gene, frameon=False, cmap=magma, use_raw=False,
                    show=False, legend_loc='on data', ax=axs[row_gene * 2][col_gene], vmin=min_gene, vmax=max_gene)
