@@ -6,6 +6,8 @@ import numpy as np
 import scanpy as sc
 import seaborn as sns
 from statannot import add_stat_annotation
+import matplotlib.pylab as pylab
+
 
 magma = [plt.get_cmap('magma')(i) for i in np.linspace(0,1, 80)]
 magma[0] = (0.88, 0.88, 0.88, 1)
@@ -247,13 +249,30 @@ def plot_WT_KO_genes(adata, genes, n_cols=3, figsize=None, plot_labels_batch=Tru
         
         min_gene, max_gene = adata[:, gene].X.min(), adata[:, gene].X.max()
         
-        sc.pl.umap(adata_WT, color=gene, frameon=False, cmap=magma, use_raw=False,
-                   show=False, legend_loc='on data', ax=axs[row_gene * 2][col_gene], vmin=min_gene, vmax=max_gene)
+        sc.pl.umap(adata_WT, color=gene, frameon=True, cmap=magma, use_raw=False,
+                   show=False, legend_loc='on data', ax=axs[row_gene * 2][col_gene], 
+                   vmin=min_gene, vmax=max_gene)
         
-        sc.pl.umap(adata_KO, color=gene, frameon=False, cmap=magma, use_raw=False,
-                   show=False, legend_loc='on data', ax=axs[row_gene * 2 + 1][col_gene], vmin=min_gene, vmax=max_gene)        
+        sc.pl.umap(adata_KO, color=gene, frameon=True, cmap=magma, use_raw=False,
+                   show=False, legend_loc='on data', ax=axs[row_gene * 2 + 1][col_gene], 
+                   vmin=min_gene, vmax=max_gene, title='')        
     
     
+    for row in range(n_rows):
+        axs[2 * row][0].set_ylabel('WT', fontsize=pylab.rcParams['font.size'] * 2.5)
+        axs[2 * row + 1][0].set_ylabel('KO', fontsize=pylab.rcParams['font.size'] * 2.5)
+    
+    for ax in axs[::2, :].ravel():
+        ax.title.set_fontsize(pylab.rcParams['font.size'] * 2.5)
+    
+    for ax in axs[:, 1:].ravel():
+        ax.set_ylabel('')
+    
+    for ax in axs.ravel():
+        ax.set_xlabel('')
+        for spine in ax.spines.values():
+            spine.set_visible(False)
+        
     # clean axes
     for col in range(col_gene + 1, n_cols):
         axs[row_gene * 2][col].set_axis_off()
