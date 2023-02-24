@@ -7,6 +7,7 @@ import scanpy as sc
 import seaborn as sns
 from statannot import add_stat_annotation
 import matplotlib.pylab as pylab
+import os
 
 
 magma = [plt.get_cmap('magma')(i) for i in np.linspace(0,1, 80)]
@@ -279,3 +280,24 @@ def plot_WT_KO_genes(adata, genes, n_cols=3, figsize=None, plot_labels_batch=Tru
         axs[row_gene * 2 + 1][col].set_axis_off()
     
     plt.tight_layout()
+    
+    
+def save_adata(adatax, path_h5):
+    """Currently there are some problems saving h5 files due to their obs and var dtypes. 
+    Changing the saving from h5 to loom implicitly corrects some of these dtypes and the error stops. 
+    However, loom does not save .uns info, so we load again the adata saved to loom and change adata.obs and adata.var to the ones from loom."""
+    
+    adatax.write_loom(path_h5.replace('h5', 'loom'), write_obsm_varm=True)
+    adatax_loom = sc.read(path_h5.replace('h5', 'loom'))
+    
+    adatax.obs = adatax_loom.obs
+    adatax.var = adatax_loom.var
+    adatax.var = adatax_loom.var
+    
+    
+    if 'triku_params' in adatax.uns:
+        del adatax.uns['triku_params']
+    
+    adatax.write_h5ad(path_h5, compression='gzip')
+    os.system(path_h5.replace('h5', 'loom'))
+    
